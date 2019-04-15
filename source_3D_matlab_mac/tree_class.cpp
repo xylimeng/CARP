@@ -720,7 +720,7 @@ void class_tree::get_lambda_mat()
     //TODO: check lambda_mat colsum = 1
 }
 
-umat class_tree::draw_post_position(const uword& n_smp)
+umat class_tree::draw_post_position(const int& n_smp)
 {
     uword num_location = prod(dimension);
     umat rank_left_child = rank_left_child_2; //debug; then remove "_2"

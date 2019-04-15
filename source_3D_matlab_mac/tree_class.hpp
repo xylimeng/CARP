@@ -62,7 +62,7 @@ public:
     vec post_lambda_d; 
     mat lambda_mat;
     void get_lambda_mat(); // obtain matrix form of lambda map (a lot of zeros; not compact)
-    umat draw_post_position(const uword& n_smp); // draw samples from the posterior distribution of tree; return position
+    umat draw_post_position(const int& n_smp); // draw samples from the posterior distribution of tree; return position
 };
 
 #endif /* tree_class_hpp */
