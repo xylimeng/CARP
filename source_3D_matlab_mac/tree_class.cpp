@@ -63,6 +63,14 @@ class_tree::class_tree (const vec& obs_input, uvec& dimension_input)
         F(l) = (find(level == l));
     };
     
+    position.set_size(N);
+    position.fill(0);
+    umat dummy = tube_rank.rows(F(total_level));
+    for (int d = 0; d < m; d++){
+        dummy.col(d) -= (dimension(d) - 1); // obtain the rank in the last scale
+    }
+    position(F(total_level)) = rank_tube2vec(dummy, dimension) - 1; //starts from 0
+    
     // information for 'families': nodes that have (parents, children)
     // initialize it at d = 0
     // first generate N by d tube, then extract the 'temp' elements
@@ -127,6 +135,19 @@ class_tree::class_tree (const vec& obs_input, uvec& dimension_input)
     // v = sqrt(n_A);
     
     num_child_double = arma::conv_to< vec >::from(num_child);
+    
+    // family label: starts from 1
+    family_rank.set_size(N, m);
+    family_rank.fill(-1);
+    uword count = 0;
+    for (int d = 0; d < m ; d++){
+        for (int l = 0; l < N; l++){
+            if (dividible(l, d) == 1){
+                count = count + 1;
+                family_rank(l, d) = count;
+            }
+        }
+    }
     
     // rescale sum
     rescale_sum = accu(obs) / sqrt(obs.n_elem);
@@ -670,7 +691,9 @@ vec class_tree::get_lambda_map(const mat& par)
     vec post_eta(N_prime);
     post_eta = log_eta(level(invert_compact_idx_map)) + log_p0 - log_Phi;
     
-    vec  post_lambda_d(pair_N, fill::zeros), M_d(pair_N), post_rho_d(pair_N);
+    post_lambda_d.zeros(pair_N);
+    
+    vec  M_d(pair_N), post_rho_d(pair_N);
     for (int i = 0; i < pair_N; i++)
     {
         double part1 = log_rho(pair_level(i)) + log_ratio_function(w_d(i) / sigma, tau_vec(pair_level(i)));
@@ -687,6 +710,57 @@ vec class_tree::get_lambda_map(const mat& par)
     };
     
     return post_lambda_d; 
+}
+
+void class_tree::get_lambda_mat()
+{
+    lambda_mat.set_size(N, m);
+    lambda_mat.fill(0);
+    lambda_mat(find(dividible_2 > 0)) = exp(post_lambda_d);
+    //TODO: check lambda_mat colsum = 1
+}
+
+umat class_tree::draw_post_position(const uword& n_smp)
+{
+    uword num_location = prod(dimension);
+    umat rank_left_child = rank_left_child_2; //debug; then remove "_2"
+    umat rank_right_child = rank_right_child_2;
+    // start sampling
+    umat smp_position(num_location, n_smp);
+    
+    for (int ith_tree = 0; ith_tree < n_smp; ith_tree ++)
+    {
+        uvec family_in(num_location - 1);
+        uvec node_in = { 1 }; // node_in contains the 'ranks' of nodes included;
+        
+        
+        for (int l = 0; l <= total_level - 1; l ++) // current level: decide best 'd' and children nodes included
+        {
+            // which_direction returns a value from 0 to (m - 1)
+            
+            vec s = randu<vec>(node_in.n_elem);
+            mat aa = cumsum(lambda_mat.rows(node_in - 1), 1); // cumsum in each row
+
+            uvec which_direction(node_in.n_elem, fill::zeros);
+            
+            for (int ith_col = 0; ith_col < m; ith_col ++)
+            {
+                which_direction += (aa.col(ith_col) < s);
+            }
+            
+            uvec idx_selected = which_direction * N + node_in - 1;
+            uvec temp = merge_left_right(rank_left_child(idx_selected), rank_right_child(idx_selected));
+            node_in.swap(temp);
+            
+            family_in(span(pow(2, l) - 1, pow(2, l + 1) - 2)) = family_rank(idx_selected);
+        }
+        
+        uvec position_smp = position(node_in - 1);
+        
+        smp_position.col(ith_tree) = position_smp;
+    }
+    
+    return smp_position; 
 }
 
 

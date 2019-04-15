@@ -16,6 +16,7 @@
 #include <iostream>
 #include <math.h>
 #include </usr/local/include/armadillo>
+#include <random>
 
 using namespace std;
 using namespace arma;
@@ -50,8 +51,18 @@ public:
     vec y, ss; 
     
     // used for matlab trials - didn't export these var's in the past 
-    umat rank_left_child_2, rank_right_child_2, dividible_2; //'_2': questionable - remove finally 
+    umat rank_left_child_2, rank_right_child_2, dividible_2; //'_2': questionable - remove finally
+    umat rank_left_child, rank_right_child, dividible; 
     double rescale_sum;
+    
+    // draw trees
+    // dictionary for family labels (or 'rank'): 'rank' starts from 1
+    umat family_rank;
+    uvec position; // position in the raw location space; useful for the last scale: starts from 0
+    vec post_lambda_d; 
+    mat lambda_mat;
+    void get_lambda_mat(); // obtain matrix form of lambda map (a lot of zeros; not compact)
+    umat draw_post_position(const uword& n_smp); // draw samples from the posterior distribution of tree; return position
 };
 
 #endif /* tree_class_hpp */
