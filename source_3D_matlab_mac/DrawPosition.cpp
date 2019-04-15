@@ -49,10 +49,10 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     umat post_position = tree_test.draw_post_position(n_smp);
     
     // Create the output argument plhs[0] to return cube C
-    plhs[0] = armaCreateMxMatrix(post_position.n_rows, post_position.n_cols);
+    plhs[0] = armaCreateMxMatrix(post_position.n_rows, post_position.n_cols, mxUINT64_CLASS);
     
     // Return the cube C as plhs[0] in Matlab/Octave
-    armaSetPr(plhs[0], post_position);
+    armaSetData(plhs[0], post_position);
     
     return;
 }
