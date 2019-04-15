@@ -25,7 +25,7 @@ void
 mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
     // Check the number of input arguments.
-    if (nrhs != 4)
+    if (nrhs != 5)
         mexErrMsgTxt("Incorrect number of input arguments.");
     
     vec obs = armaGetPr(prhs[0]);
@@ -34,6 +34,7 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     
     vec hyper = armaGetPr(prhs[2]);
     int n_smp = armaGetScalar<int>(prhs[3]);
+    int seed = armaGetScalar<int>(prhs[4]);
             
     // Perform calculations
     class_tree tree_test(obs, dimension);
@@ -42,8 +43,8 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     tree_test.get_lambda_map(par);
     tree_test.get_lambda_mat();
     
-    arma_rng::set_seed(2019); //set_seed 2019;
-    // arma_rng::set_seed_random() // set random seed 
+    arma_rng::set_seed(seed); //set_seed 2019;
+    // arma_rng::set_seed_random() // set random seed
     
     umat post_position = tree_test.draw_post_position(n_smp);
     
