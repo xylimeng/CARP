@@ -32,9 +32,14 @@ hyper0_t = hyper_3D_default(obs(:), dimension', false);
 % number of random trees
 n_tree = 2;
 rand_seed = 2019; %random seed used by armadillo in the function "DrawPosition"
-position_all = DrawPosition(obs(:), dimension', hyper0_t, n_tree, ...
+smp_all = DrawPosition(obs(:), dimension', hyper0_t, n_tree, ...
                             rand_seed);
 % consider to change rand_seed if run multiple replications 
+
+%% layout of 'smp_all': 
+direction_all = smp_all(1:(numel(obs) - 1), :); 
+pruning_all = smp_all(numel(obs): (2 * numel(obs) - 2), :); 
+position_all = smp_all((2 * numel(obs) - 1):end, :); 
 
 % summarize one tree
 ith_tree = 1;
