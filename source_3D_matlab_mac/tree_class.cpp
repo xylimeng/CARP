@@ -655,7 +655,7 @@ vec class_tree::get_M_d_map(const mat& par)
     return M_d; 
 }
 
-vec class_tree::get_lambda_map(const mat& par)
+void class_tree::get_post_map(const mat& par)
 {
     
     // parameters: 3 rows by (total_level + 1): last element is sigma
@@ -688,7 +688,8 @@ vec class_tree::get_lambda_map(const mat& par)
     vec log_eta_c = log(1 - eta_vec);
     
     
-    vec post_eta(N_prime);
+    // vec post_eta(N_prime); size of post_eta is N_prime
+    post_eta.set_size(N_prime); 
     post_eta = log_eta(level(invert_compact_idx_map)) + log_p0 - log_Phi;
     
     post_lambda_d.zeros(pair_N);
@@ -709,7 +710,6 @@ vec class_tree::get_lambda_map(const mat& par)
         
     };
     
-    return post_lambda_d; 
 }
 
 void class_tree::get_lambda_mat()
@@ -720,13 +720,63 @@ void class_tree::get_lambda_mat()
     //TODO: check lambda_mat colsum = 1
 }
 
-umat class_tree::draw_post_position(const int& n_smp)
+//umat class_tree::draw_post_position(const uword& n_smp)
+//{
+//    uword num_location = prod(dimension);
+//    umat rank_left_child = rank_left_child_2; //debug; then remove "_2"
+//    umat rank_right_child = rank_right_child_2;
+//    // start sampling
+//    umat smp_position(num_location, n_smp);
+//
+//
+//
+//    for (int ith_tree = 0; ith_tree < n_smp; ith_tree ++)
+//    {
+//        uvec family_in(num_location - 1);
+//        uvec node_in = { 1 }; // node_in contains the 'ranks' of nodes included;
+//
+//
+//        for (int l = 0; l <= total_level - 1; l ++) // current level: decide best 'd' and children nodes included
+//        {
+//            // which_direction returns a value from 0 to (m - 1)
+//
+//            vec s = randu<vec>(node_in.n_elem);
+//            mat aa = cumsum(lambda_mat.rows(node_in - 1), 1); // cumsum in each row
+//
+//            uvec which_direction(node_in.n_elem, fill::zeros);
+//
+//            for (int ith_col = 0; ith_col < m; ith_col ++)
+//            {
+//                which_direction += (aa.col(ith_col) < s);
+//            }
+//
+//            uvec idx_selected = which_direction * N + node_in - 1;
+//            uvec temp = merge_left_right(rank_left_child(idx_selected), rank_right_child(idx_selected));
+//            node_in.swap(temp);
+//
+//            family_in(span(pow(2, l) - 1, pow(2, l + 1) - 2)) = family_rank(idx_selected);
+//        }
+//
+//        uvec position_smp = position(node_in - 1);
+//
+//        smp_position.col(ith_tree) = position_smp;
+//    }
+//
+//    return smp_position;
+//}
+
+
+umat class_tree::draw_post_position(const uword& n_smp)
 {
     uword num_location = prod(dimension);
     umat rank_left_child = rank_left_child_2; //debug; then remove "_2"
     umat rank_right_child = rank_right_child_2;
     // start sampling
     umat smp_position(num_location, n_smp);
+    umat smp_direction(num_location - 1, n_smp);
+    umat smp_pruning(num_location - 1, n_smp);
+    
+    
     
     for (int ith_tree = 0; ith_tree < n_smp; ith_tree ++)
     {
@@ -740,7 +790,7 @@ umat class_tree::draw_post_position(const int& n_smp)
             
             vec s = randu<vec>(node_in.n_elem);
             mat aa = cumsum(lambda_mat.rows(node_in - 1), 1); // cumsum in each row
-
+            
             uvec which_direction(node_in.n_elem, fill::zeros);
             
             for (int ith_col = 0; ith_col < m; ith_col ++)
@@ -749,6 +799,17 @@ umat class_tree::draw_post_position(const int& n_smp)
             }
             
             uvec idx_selected = which_direction * N + node_in - 1;
+            
+            // store sampled directions
+            smp_direction(span(pow(2, l) - 1, pow(2, l + 1) - 2), ith_tree) = which_direction;
+            
+            // sample pruning
+            uvec indicator_prune(node_in.n_elem, fill::zeros);
+            vec s_prune = randu<vec>(node_in.n_elem);
+            vec aa_prune = exp(post_eta(compact_idx_map(node_in - 1)));
+            indicator_prune += (s_prune < aa_prune);
+            smp_pruning(span(pow(2, l) - 1, pow(2, l + 1) - 2), ith_tree) = indicator_prune;
+            
             uvec temp = merge_left_right(rank_left_child(idx_selected), rank_right_child(idx_selected));
             node_in.swap(temp);
             
@@ -760,9 +821,7 @@ umat class_tree::draw_post_position(const int& n_smp)
         smp_position.col(ith_tree) = position_smp;
     }
     
-    return smp_position; 
+    umat smp_all = join_cols(join_cols(smp_direction, smp_pruning), smp_position);
+    return smp_all;
 }
-
-
-
 

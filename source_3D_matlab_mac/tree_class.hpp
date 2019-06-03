@@ -34,7 +34,8 @@ public:
     
     vec get_M_d_map(const mat& par); // obtain log(M_d)
     
-    vec get_lambda_map(const mat& par); // obtain log(lambda_d) 
+    // vec get_lambda_map(const mat& par); // obtain log(lambda_d)
+    void get_post_map(const mat& par); // obtain log(lambda_d) and post_eta (log scale); both posterior maps
     
     double marginal_likelihood(const mat& par); // marginal likelihood
     
@@ -59,10 +60,12 @@ public:
     // dictionary for family labels (or 'rank'): 'rank' starts from 1
     umat family_rank;
     uvec position; // position in the raw location space; useful for the last scale: starts from 0
-    vec post_lambda_d; 
+    vec post_lambda_d;
+    vec post_eta; 
     mat lambda_mat;
     void get_lambda_mat(); // obtain matrix form of lambda map (a lot of zeros; not compact)
-    umat draw_post_position(const int& n_smp); // draw samples from the posterior distribution of tree; return position
+//    umat draw_post_position(const uword& n_smp); // draw samples from the posterior distribution of tree; return position
+    umat draw_post_position(const uword& n_smp); // draw samples from the posterior distribution of tree; return (direction, pruning indicator, position) by (number of samples)
 };
 
 #endif /* tree_class_hpp */
