@@ -40,7 +40,7 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     class_tree tree_test(obs, dimension);
     mat par = tree_test.hyper2par(hyper);
     
-    tree_test.get_lambda_map(par);
+    tree_test.get_post_map(par);
     tree_test.get_lambda_mat();
     
     arma_rng::set_seed(seed); //set_seed 2019;
