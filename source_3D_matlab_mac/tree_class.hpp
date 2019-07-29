@@ -42,6 +42,7 @@ public:
     mat hyper2par(const vec &x); // re-parameterization for optim
     
     vec fit_tree(const mat& par, const vec& shift_vec); // estimtation without cycle spinning
+    vec fit_tree(const mat& par); // estimtation without cycle spinning; default: no shift 
     vec fit_tree_cs(const mat& par, int step); // estimation via cycle spinning;
     
 //private:
@@ -66,6 +67,10 @@ public:
     void get_lambda_mat(); // obtain matrix form of lambda map (a lot of zeros; not compact)
 //    umat draw_post_position(const uword& n_smp); // draw samples from the posterior distribution of tree; return position
     umat draw_post_position(const uword& n_smp); // draw samples from the posterior distribution of tree; return (direction, pruning indicator, position) by (number of samples)
+    
+    umat MAP_tree; mat MAP_fit;
+    void fit_MAP_tree(const mat& par, const vec& shift_vec); // obtain the MAP tree and estimate
+    void fit_MAP_tree(const mat& par); // obtain the MAP tree and estimate; no shift as default
 };
 
 #endif /* tree_class_hpp */
