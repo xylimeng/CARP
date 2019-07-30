@@ -25,7 +25,7 @@ void
 mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
     // Check the number of input arguments.
-    if (nrhs != 5)
+    if (nrhs != 3)
         mexErrMsgTxt("Incorrect number of input arguments.");
     
     vec obs = armaGetPr(prhs[0]);
@@ -33,8 +33,6 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     uvec dimension = conv_to<uvec>::from( dimension_vec );
     
     vec hyper = armaGetPr(prhs[2]);
-    int n_smp = armaGetScalar<int>(prhs[3]);
-    int seed = armaGetScalar<int>(prhs[4]);
             
     // Perform calculations
     class_tree tree_test(obs, dimension);
@@ -50,7 +48,7 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     
     // Create the output argument plhs[0] to return cube C
     plhs[0] = armaCreateMxMatrix(MAP_tree.n_rows, MAP_tree.n_cols, mxUINT64_CLASS);
-    plhs[1] = armaCreateMxMatrix(MAP_tree.n_rows, MAP_tree.n_cols);
+    plhs[1] = armaCreateMxMatrix(MAP_fit.n_rows, MAP_fit.n_cols);
     
     // Return the cube C as plhs[0] in Matlab/Octave
     armaSetData(plhs[0], MAP_tree);
