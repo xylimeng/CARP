@@ -1015,8 +1015,9 @@ void class_tree::fit_MAP_tree(const mat& par, const vec& shift_vec)
         uvec right_pair_in = idx_pair(compact_idx_map(right_idx_d(idx)));
         pair_in(l + 1) = merge_left_right(left_pair_in, right_pair_in);
         
-        uvec multiplier_temp = merge_left_right(node_R(l), node_R(l));
-        node_R(l + 1) = (idx_pair_pruning(l + 1) + multiplier_temp > 0); // at least parent and children nodes are pruned; boolen operator; not sure why '||' not working so use this naive solution
+        uvec left_pair_in_pruning = idx_pair_pruning(compact_idx_map(left_idx_d(idx)));
+        uvec right_pair_in_pruning = idx_pair_pruning(compact_idx_map(right_idx_d(idx)));
+        node_R(l + 1) = merge_left_right((node_R(l) + left_pair_in_pruning > 0), (node_R(l) + right_pair_in_pruning > 0)); // at least parent and children nodes are pruned; boolen operator; not sure why '||' not working so use this naive solution
     };
     
     MAP_tree.set_size(obs.n_elem - 1, 2);
