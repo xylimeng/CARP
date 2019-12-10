@@ -1,10 +1,3 @@
-//
-//  tree_class.cpp
-//  Surfing
-//
-//  Created by Meng Li on 7/15/16.
-//  Copyright © 2016 Meng Li. All rights reserved.
-//
 
 #include "tree_class.hpp"
 #include "helper.hpp"

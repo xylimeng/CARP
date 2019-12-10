@@ -1,4 +1,4 @@
-function x = hyper_3D_default(obs, dimension, prunning)
+function x = hyper_3D_default(obs, dimension, prunning, sigma_hat)
 tic;
 if nargin == 2
     prunning = true; 
@@ -13,8 +13,8 @@ end
 total_level = log2(numel(obs));
 idx = (1:2:numel(obs));
 a = (obs(idx) - obs(idx + 1)) ./ sqrt(2);
-sigma_hat = mad(a(:), 1) * 1.4826;
-
+%sigma_hat = mad(a(:), 1) * 1.4826;
+%sigma_hat = 0.0001;
 % beta = 1; last_rho = 0.05; alpha = 0; last_tau = 1/(sigma_hat^2); eta = 0.5;
 % x(1) = log(beta); x(2) = log(last_rho) + log(2) * beta * total_level;
 % x(4) = log(alpha);
@@ -47,10 +47,10 @@ hyper = [log(beta) + adjust;
 %     ll_value(i) = treeLikelihood(obs, dimension, hyper(:,i)); 
 % end
 %delete(poolobj)
-ll_value = treeLikelihood(obs, dimension, hyper(:,1:3));
+%ll_value = treeLikelihood(obs, dimension, hyper);
 % sprintf('selected: (alpha, beta, last_tau * sigma * sigma, last_rho, eta) = (%.2f, %.2f, %.2f, %.2f, %.2f)', ...
 %     alpha(v), 1, last_tau(v) * sigma_hat^2, last_rho(v), eta(v))
-[~,v] = max(ll_value);
-x = hyper(:, v); 
+%[~,v] = max(ll_value);
+x = hyper(:, 2); 
 toc;
 end

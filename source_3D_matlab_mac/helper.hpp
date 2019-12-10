@@ -1,9 +1,7 @@
 //
 //  helper.hpp
 //  Surfing
-//
-//  Created by Meng Li on 7/15/16.
-//  Copyright © 2016 Meng Li. All rights reserved.
+
 //
 
 #ifndef helper_hpp
@@ -16,6 +14,7 @@
 #include <stdio.h>
 #include <math.h>
 #include </usr/local/include/armadillo>
+// you need to change to your local path of armadillo
 
 using namespace std;
 using namespace arma;

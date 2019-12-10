@@ -1,10 +1,3 @@
-//
-//  tree_class.hpp
-//  Surfing
-//
-//  Created by Meng Li on 7/15/16.
-//  Copyright © 2016 Meng Li. All rights reserved.
-//
 
 #ifndef tree_class_hpp
 #define tree_class_hpp
@@ -15,7 +8,6 @@
 #include <stdio.h>
 #include <iostream>
 #include <math.h>
-#include </usr/local/include/armadillo>
 #include <random>
 
 using namespace std;

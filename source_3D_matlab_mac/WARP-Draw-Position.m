@@ -1,9 +1,7 @@
-%% Compare JPEG & JPEG2000 with WARP in 3D image
-%% fix a compression rate, compare the PSNR
-%% Rongjie Liu @ 03/2019 @ Rice
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% WARP for reducing dimension
+%% CARP for reducing dimension
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Global settings
 str = computer;

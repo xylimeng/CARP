@@ -1,7 +1,4 @@
-% function to generate the true 3D images 
-% f1: f1 in Peihua Qiu's paper
-% f2: f2 in Peihua Qiu's paper
-% f3: 3D phantom 
+
 
 % Input: n - length of each dimensiona; 
 %        sigma_noise - standard deviation of Gaussian noise; 
