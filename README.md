@@ -1,8 +1,8 @@
 # CARP
 
-CARP(Compression through Adaptive Recursive Partitioning for Multi-dimensional Image Data), which is a 
+CARP(Compression through Adaptive Recursive Partitioning for Multi-dimensional Image Data) is a 
 command-line software program written in MATLAB/C++ and designed to
-compress multi-dimensional images.
+compress multi-dimensional images (2D images, 3D volumes, videos, etc.).
 
 
 
