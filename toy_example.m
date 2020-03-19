@@ -2,12 +2,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%
 clear all
 %% Global settings %%%%%%
-str = computer;
+
 % use 'mex_this.m' to compile the cpp code for matlab if neither works
 addpath('source_3D_matlab_mac');
 addpath('source_SMC');
 % addpath('WARP');
-rng(0);
+
 
 %% Generate the toy stripe flag %%%%%
 
@@ -23,13 +23,16 @@ mat = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1;
 %imagesc(mat) %show your original image
 dimension = size(mat);
 n = numel(mat);
+total_level = log2(n);
 
 %% CARP for compression %%%%%
 sigma_hat = 0.01;% the adjustable parameter related to CR
-n_tree = 2;% number of random trees
-rand_seed = 2019; %random seed used by armadillo in the function "DrawPosition"
 % consider to change rand_seed if run multiple replications
+% option 1: tuning hyperparameters
 hyper1 = hyper_3D_default(mat(:), dimension', true, sigma_hat);
+% option 2: fixed hyperparameters: beta = 1; alpha = 0.5; C = 0.05; tau_0 = 1/sigma_hat; eta_0 = 0.4;
+% hyper1 = [log(beta);log(C);-log(1/eta - 1);log(alpha);log(tau_0)+alpha*total_level*log(2);log(sigma_hat)];
+% hyper1 = [0, -2.9957, -0.4055, -0.6931, -log(sigma_hat)+0.3466*total_level, log(sigma_hat)]';
 [MAP_0, MAP_fit] = MAP(mat(:), dimension', hyper1);
 % layout of 'smp_all':
 direction_1 = MAP_0(:, 1);
